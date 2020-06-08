@@ -53,8 +53,10 @@ const OrderBook = ({ market, bids, asks }) => {
   const resultAsks = [];
   const numRowsBid = Math.min(20, bids.length);
   const numRowsAsk = Math.min(20, asks.length);
-  const maxBid = BigNumber.maximum(...bids.map((bid) => bid[0])).toFormat();
+  const minBid = BigNumber.minimum(...bids.map((bid) => bid[0])).toFormat();
   const minAsk = BigNumber.minimum(...asks.map((ask) => ask[0])).toFormat();
+  const spread = BigNumber(minAsk).minus(minBid).toFormat();
+
   const classes = useStyles();
 
   for (let b = 0; b < numRowsBid; b++) {
@@ -102,7 +104,12 @@ const OrderBook = ({ market, bids, asks }) => {
                 {' '}
                 -
                 {' '}
-                {maxBid}
+                {minBid}
+                {' '}
+                -
+                Spread
+                {' '}
+                {spread}
               </TableCell>
               <TableCell />
             </TableRow>
