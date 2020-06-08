@@ -2,6 +2,25 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## App in the cloud
+    Now: https://saxobankapp.now.sh/
+
+## Routes
+    path / => Main Page
+    path /trade/:Symbol => Order Book
+
+## Some improvements to make
+    - Styles
+    - Performance (SSR)
+    - Format Number
+    - Handling Errors
+    - Logging
+    - Coverage
+    - End-To-End Testing
+    - Unit testing
+
+## Development 
+
 ## Available Scripts
 
 In the project directory, you can run:
