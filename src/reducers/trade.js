@@ -27,11 +27,18 @@ const filteredDepth = (lastUpdateId, data) => {
   return result;
 };
 
-const dataDepth = (state, update) => {
+const dataDepthAsk = (state, update) => {
   const newData = update.slice(0, 10);
   const result = state.slice(0, state.length - newData.length);
   result.push(...newData);
-  return result;
+  return result.sort((a, b) => b[0] - a[0]);
+};
+
+const dataDepthBid = (state, update) => {
+  const newData = update.slice(0, 10);
+  const result = state.slice(0, state.length - newData.length);
+  result.push(...newData);
+  return result.sort((a, b) => a[0] - b[0]);
 };
 
 const Depth = (state = initialState, action) => {
@@ -60,10 +67,10 @@ const Depth = (state = initialState, action) => {
           depth: {
             ...state.depth,
             bids: [
-              ...dataDepth(state.depth.bids, action.data.b),
+              ...dataDepthBid(state.depth.bids, action.data.b),
             ],
             asks: [
-              ...dataDepth(state.depth.asks, action.data.a),
+              ...dataDepthAsk(state.depth.asks, action.data.a),
             ],
           },
         };

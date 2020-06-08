@@ -55,7 +55,17 @@ const OrderBook = ({ market, bids, asks }) => {
   const numRowsAsk = Math.min(20, asks.length);
   const minBid = BigNumber.minimum(...bids.map((bid) => bid[0])).toFormat();
   const minAsk = BigNumber.minimum(...asks.map((ask) => ask[0])).toFormat();
-  const spread = BigNumber(minAsk).minus(minBid).toFormat();
+  let spread = 0;
+  const isMiles = minAsk.includes(',');
+
+  if (isMiles) {
+    const numBid = `0.${minBid.split(',')[1].split('.')[0]}`;
+    const numAsk = `0.${minAsk.split(',')[1].split('.')[0]}`;
+    spread = BigNumber(numAsk).minus(numBid).toFormat();
+    spread *= 1000;
+  } else {
+    spread = BigNumber(minAsk).minus(minBid).toFormat();
+  }
 
   const classes = useStyles();
 
