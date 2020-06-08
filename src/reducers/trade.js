@@ -13,7 +13,7 @@ const initialState = {
   error: null,
 };
 
-const filteredDepth = (lastUpdateId, eventU, data) => {
+const filteredDepth = (lastUpdateId, data) => {
   let result;
   const { u, U } = data;
 
@@ -24,6 +24,13 @@ const filteredDepth = (lastUpdateId, eventU, data) => {
 
   result = data;
 
+  return result;
+};
+
+const dataDepth = (state, update) => {
+  const newData = update.slice(0, 10);
+  const result = state.slice(0, state.length - newData.length);
+  result.push(...newData);
   return result;
 };
 
@@ -41,23 +48,22 @@ const Depth = (state = initialState, action) => {
         depth: {
           ...state.depth,
           lastUpdateId: action.data.lastUpdateId,
-          bids: action.data.bids,
-          asks: action.data.asks,
+          bids: action.data.bids.slice(0, 10),
+          asks: action.data.asks.slice(0, 10),
         },
       };
     case UPDATE_DEPTH:
-      if (filteredDepth(state.depth.lastUpdateId, state.depth.eventU, action.data)) {
+      if (filteredDepth(state.depth.lastUpdateId, action.data)) {
         return {
           ...state,
           isLoaded: true,
           depth: {
             ...state.depth,
-            eventU: (action.data) ? action.data.u : state.depth.eventU,
             bids: [
-              ...action.data.b,
+              ...dataDepth(state.depth.bids, action.data.b),
             ],
             asks: [
-              ...action.data.a,
+              ...dataDepth(state.depth.asks, action.data.a),
             ],
           },
         };

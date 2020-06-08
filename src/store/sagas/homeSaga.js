@@ -14,14 +14,17 @@ function requestMarket() {
 const symbols = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'EOSUSDT', 'LTCUSDT', 'ETCUSDT', 'BNBUSDT', 'VETUSDT'];
 
 export function* getInitialHome() {
-  try {
-    const { data } = yield call(requestMarket);
-    const dataFiltered = data.filter((item) => symbols.includes(item.symbol));
-    const result = getTickerByTicker(dataFiltered);
-    yield put(setMarkets(result));
-  } catch (e) {
+  const pathName = window.location.pathname;
+  if (pathName === '/') {
+    try {
+      const { data } = yield call(requestMarket);
+      const dataFiltered = data.filter((item) => symbols.includes(item.symbol));
+      const result = getTickerByTicker(dataFiltered);
+      yield put(setMarkets(result));
+    } catch (e) {
     // catch error on a bad axios call
-    console.error(e);
+      console.error(e);
+    }
   }
 }
 

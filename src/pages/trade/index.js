@@ -4,7 +4,7 @@ import propTypes, { func } from 'prop-types';
 import Loading from '../../components/loading';
 import OrderBook from '../../components/orderBook';
 import { initialTrade } from '../../actions';
-import setupSocket from '../../sockets';
+import setupSocket, { disconnectSocket } from '../../sockets';
 import { getStream } from '../../utils';
 
 const Trade = ({
@@ -18,8 +18,11 @@ const Trade = ({
 
   useEffect(() => {
     getInitialTrade(currentMarket);
-    initSocket(stream);
-  }, [currentMarket, getInitialTrade, initSocket, stream]);
+    const socket = initSocket(stream);
+    return () => {
+      disconnectSocket(socket);
+    };
+  }, [currentMarket]);
 
   return (
     <>
