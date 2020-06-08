@@ -41,8 +41,8 @@ const Depth = (state = initialState, action) => {
         depth: {
           ...state.depth,
           lastUpdateId: action.data.lastUpdateId,
-          bids: action.data.bids,
-          asks: action.data.asks,
+          bids: action.data.bids.slice(0, 10),
+          asks: action.data.asks.slice(0, 10),
         },
       };
     case UPDATE_DEPTH:
@@ -54,10 +54,10 @@ const Depth = (state = initialState, action) => {
             ...state.depth,
             eventU: (action.data) ? action.data.u : state.depth.eventU,
             bids: [
-              ...action.data.b,
+              ...action.data.b.slice(0, 10),
             ],
             asks: [
-              ...action.data.a,
+              ...action.data.a.slice(0, 10),
             ],
           },
         };

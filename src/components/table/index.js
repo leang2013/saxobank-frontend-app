@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import BigNumber from 'bignumber.js';
 import propTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,9 +11,23 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  body: {
+    fontSize: 12,
+    color: theme.palette.common.white,
+  },
+}))(TableCell);
+
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+    minHeight: 100,
+    backgroundColor: 'gray',
   },
 });
 
@@ -33,32 +47,32 @@ const DataTable = ({ ticker, filter }) => {
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="caption table">
         <caption>Markets</caption>
-        <TableHead>
+        <TableHead className={classes.head}>
           <TableRow>
-            <TableCell>Pair</TableCell>
-            <TableCell align="right">Last Price</TableCell>
-            <TableCell align="right">24h Change</TableCell>
-            <TableCell align="right">24h High</TableCell>
-            <TableCell align="right">24h Low</TableCell>
-            <TableCell align="right">24h Volume</TableCell>
+            <StyledTableCell>Pair</StyledTableCell>
+            <StyledTableCell align="right">Last Price</StyledTableCell>
+            <StyledTableCell align="right">24h Change</StyledTableCell>
+            <StyledTableCell align="right">24h High</StyledTableCell>
+            <StyledTableCell align="right">24h Low</StyledTableCell>
+            <StyledTableCell align="right">24h Volume</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.symbol}>
               <Link to={`trade/${row.symbol}`}>
-                <TableCell component="th" scope="row">
+                <StyledTableCell component="th" scope="row">
                   {row.symbol}
-                </TableCell>
+                </StyledTableCell>
               </Link>
-              <TableCell align="right">{new BigNumber(row.lastPrice).toFormat(null, 1)}</TableCell>
-              <TableCell align="right">
+              <StyledTableCell align="right">{new BigNumber(row.lastPrice).toFormat(null, 1)}</StyledTableCell>
+              <StyledTableCell align="right">
                 {new BigNumber(row.priceChangePercent).toFormat(2, 1)}
                 %
-              </TableCell>
-              <TableCell align="right">{new BigNumber(row.highPrice).toFormat(null, 1)}</TableCell>
-              <TableCell align="right">{new BigNumber(row.lowPrice).toFormat(null, 1)}</TableCell>
-              <TableCell align="right">{new BigNumber(row.quoteVolume).toFormat(null, 1)}</TableCell>
+              </StyledTableCell>
+              <StyledTableCell align="right">{new BigNumber(row.highPrice).toFormat(null, 1)}</StyledTableCell>
+              <StyledTableCell align="right">{new BigNumber(row.lowPrice).toFormat(null, 1)}</StyledTableCell>
+              <StyledTableCell align="right">{new BigNumber(row.quoteVolume).toFormat(null, 1)}</StyledTableCell>
             </TableRow>
           ))}
         </TableBody>

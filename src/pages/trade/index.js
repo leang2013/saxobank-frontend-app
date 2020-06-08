@@ -19,7 +19,7 @@ const Trade = ({
   useEffect(() => {
     getInitialTrade(currentMarket);
     initSocket(stream);
-  }, [currentMarket, getInitialTrade, initSocket, stream]);
+  }, [currentMarket]);
 
   return (
     <>

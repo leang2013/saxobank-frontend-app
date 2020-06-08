@@ -1,6 +1,5 @@
-import { combineReducers, createStore, applyMiddleware } from 'redux';
+import { combineReducers, createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddware from 'redux-saga';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import reducer from '../reducers';
 import rootSaga from './sagas/rootSaga';
 import setupSocket from '../sockets';
@@ -14,11 +13,19 @@ const rootReducer = combineReducers({
   saxoBank: reducer,
 });
 
+const toolEnv = process.env.NODE_ENV === 'development';
 
-const store = createStore(rootReducer, composeWithDevTools(
-  applyMiddleware(...middlewares),
-  // other store enhancers if any
-));
+
+const store = createStore(
+  rootReducer,
+  compose(
+    applyMiddleware(
+      ...middlewares,
+    ),
+    (window.devToolsExtension && toolEnv)
+      ? window.devToolsExtension() : (f) => f, // Needed for redux-devtools-extension
+  ),
+);
 
 
 const stream = getStream();
