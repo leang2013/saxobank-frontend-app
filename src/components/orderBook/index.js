@@ -39,11 +39,12 @@ const useStyles = makeStyles({
 });
 
 const OrderRow = ({
-  i, ba, diff, max, classes
+  i, ba, classes,
 }) => (
   <TableRow className={classes.row} key={`${i}:${ba[0]}:${ba[1]}`}>
     <StyledTableCell>{new BigNumber(ba[0]).toFormat(null, 1)}</StyledTableCell>
     <StyledTableCell>{new BigNumber(ba[1]).toFormat(null, 1)}</StyledTableCell>
+    <StyledTableCell>{new BigNumber(ba[0]).multipliedBy(ba[1]).toFormat(2)}</StyledTableCell>
   </TableRow>
 );
 
@@ -53,19 +54,17 @@ const OrderBook = ({ market, bids, asks }) => {
   const numRowsBid = Math.min(20, bids.length);
   const numRowsAsk = Math.min(20, asks.length);
   const maxBid = BigNumber.maximum(...bids.map((bid) => bid[0])).toFormat();
-  const minBid = BigNumber.minimum(...bids.map((bid) => bid[0])).toFormat();
   const minAsk = BigNumber.minimum(...asks.map((ask) => ask[0])).toFormat();
-  const maxAsk = BigNumber.maximum(...asks.map((ask) => ask[0])).toFormat();
   const classes = useStyles();
 
   for (let b = 0; b < numRowsBid; b++) {
     resultBids.push(
-      <OrderRow i={b} ba={bids[b]} diff={maxBid} max={minBid} key={`${b}:${bids[b][0]}:${bids[b][1]}`} classes={classes} />,
+      <OrderRow i={b} ba={bids[b]} key={`${b}:${bids[b][0]}:${bids[b][1]}`} classes={classes} />,
     );
   }
   for (let a = 0; a < numRowsAsk; a++) {
     resultAsks.unshift(
-      <OrderRow i={a} ba={asks[a]} diff={minAsk} max={maxAsk} key={`${a}:${asks[a][0]}:${asks[a][1]}`} classes={classes} />,
+      <OrderRow i={a} ba={asks[a]} key={`${a}:${asks[a][0]}:${asks[a][1]}`} classes={classes} />,
     );
   }
 
@@ -86,22 +85,26 @@ const OrderBook = ({ market, bids, asks }) => {
                 - Order Book
               </TableCell>
               <TableCell className={classes.head} />
+              <TableCell className={classes.head} />
             </TableRow>
             <TableRow>
               <StyledTableCell>Price</StyledTableCell>
               <StyledTableCell>Amount</StyledTableCell>
+              <StyledTableCell>Total</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {resultAsks}
             <TableRow>
-              <TableCell className={classes.price} align="center">
+              <TableCell />
+              <TableCell className={classes.price}>
                 {minAsk}
                 {' '}
                 -
                 {' '}
                 {maxBid}
               </TableCell>
+              <TableCell />
             </TableRow>
             {resultBids}
           </TableBody>
@@ -114,15 +117,13 @@ const OrderBook = ({ market, bids, asks }) => {
 OrderRow.defaultProps = {
   i: '',
   ba: '',
-  diff: '',
-  max: '',
+  classes: null,
 };
 
 OrderRow.propTypes = {
   i: propTypes.number,
   ba: propTypes.arrayOf(propTypes.string),
-  diff: propTypes.number,
-  max: propTypes.number,
+  classes: propTypes.object,
 };
 
 OrderBook.defaultProps = {

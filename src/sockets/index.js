@@ -2,6 +2,12 @@ import { getTickerByTicker } from '../utils';
 import { updateMarkets, updateDepth } from '../actions';
 import urls from '../config/urls';
 
+export const disconnectSocket = (socket) => {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.close();
+  }
+};
+
 const setupSocket = (dispatch, stream) => {
   const socket = new WebSocket(`${urls.sw}/${stream}`);
   let data;
@@ -18,6 +24,7 @@ const setupSocket = (dispatch, stream) => {
         dispatch(updateDepth(data));
         break;
       default:
+        break;
     }
   };
 
