@@ -13,32 +13,42 @@ const initialState = {
   error: null,
 };
 
-const filteredDepth = (lastUpdateId, data) => {
-  let result;
-  const { u, U } = data;
+const dataDepthAsk = (state, newData, lastUpdateId) => {
+  let asks;
+  const { u, U, a } = newData;
 
-  if (u <= lastUpdateId) return result;
-
-  const lastUpdated = lastUpdateId + 1;
-  if (U <= lastUpdated && u >= lastUpdated) result = data;
-
-  result = data;
-
-  return result;
+  if (u) {
+    if (u <= lastUpdateId) return state;
+    if (U <= lastUpdateId + 1 && u >= lastUpdateId + 1) {
+      asks = a;
+    } else {
+      asks = a;
+    }
+  }
+  asks = a;
+  asks = asks.slice(0, 10);
+  const result = state.slice(0, state.length - asks.length);
+  result.push(...asks);
+  return result.sort((itemA, itemB) => itemB[0] - itemA[0]);
 };
 
-const dataDepthAsk = (state, update) => {
-  const newData = update.slice(0, 10);
-  const result = state.slice(0, state.length - newData.length);
-  result.push(...newData);
-  return result.sort((a, b) => b[0] - a[0]);
-};
+const dataDepthBid = (state, newData, lastUpdateId) => {
+  let bids;
+  const { u, U, b } = newData;
 
-const dataDepthBid = (state, update) => {
-  const newData = update.slice(0, 10);
-  const result = state.slice(0, state.length - newData.length);
-  result.push(...newData);
-  return result.sort((a, b) => a[0] - b[0]);
+  if (u) {
+    if (u <= lastUpdateId) return state;
+    if (U <= lastUpdateId + 1 && u >= lastUpdateId + 1) {
+      bids = b;
+    } else {
+      bids = b;
+    }
+  }
+  bids = b;
+  bids = bids.slice(0, 10);
+  const result = state.slice(0, state.length - bids.length);
+  result.push(...bids);
+  return result.sort((itemA, itemB) => itemA[0] - itemB[0]);
 };
 
 const Depth = (state = initialState, action) => {
@@ -60,22 +70,19 @@ const Depth = (state = initialState, action) => {
         },
       };
     case UPDATE_DEPTH:
-      if (filteredDepth(state.depth.lastUpdateId, action.data)) {
-        return {
-          ...state,
-          isLoaded: true,
-          depth: {
-            ...state.depth,
-            bids: [
-              ...dataDepthBid(state.depth.bids, action.data.b),
-            ],
-            asks: [
-              ...dataDepthAsk(state.depth.asks, action.data.a),
-            ],
-          },
-        };
-      }
-      return state;
+      return {
+        ...state,
+        isLoaded: true,
+        depth: {
+          ...state.depth,
+          bids: [
+            ...dataDepthBid(state.depth.bids, action.data, state.depth.lastUpdateId),
+          ],
+          asks: [
+            ...dataDepthAsk(state.depth.asks, action.data, state.depth.lastUpdateId),
+          ],
+        },
+      };
     default:
       return state;
   }
