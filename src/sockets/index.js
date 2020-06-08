@@ -8,6 +8,12 @@ export const disconnectSocket = (socket) => {
   }
 };
 
+const filteredData = (data) => ({
+  ...data,
+  a: data.a.filter((item) => !item[1].startsWith('0.0') && item[1] !== '0'),
+  b: data.b.filter((item) => !item[1].startsWith('0.0') && item[1] !== '0'),
+});
+
 const setupSocket = (dispatch, stream) => {
   const socket = new WebSocket(`${urls.sw}/${stream}`);
   let data;
@@ -20,7 +26,7 @@ const setupSocket = (dispatch, stream) => {
         dispatch(updateMarkets(data));
         break;
       case 'depth':
-        data = JSON.parse(event.data);
+        data = filteredData(JSON.parse(event.data));
         dispatch(updateDepth(data));
         break;
       default:
